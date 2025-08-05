@@ -50,7 +50,7 @@ public class TokenUtil {
             System.out.println("认证通过：");
             System.out.println("issuer: " + jwt.getIssuer());
             System.out.println("username: " + jwt.getClaim("username").asString());
-            System.out.println("userId: " + jwt.getClaim("userId").asString());
+//            System.out.println("userId: " + jwt.getClaim("userId").asString());
             System.out.println("id"+jwt.getClaim("id").asString());
             System.out.println("过期时间：      " + jwt.getExpiresAt());
             return true;

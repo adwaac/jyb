@@ -14,6 +14,8 @@ import java.security.NoSuchAlgorithmException;
 @RequestMapping("/t1")
 public class t1controller {
     @Autowired
+    User user;
+    @Autowired
     t1ServiceImpl t1service;
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
@@ -29,8 +31,11 @@ public class t1controller {
 
     @RequestMapping("/log")
     public User b(@RequestParam String username,String password) throws NoSuchAlgorithmException {
-
-        return t1service.log(username,password);
+        System.out.println("0");
+        user = t1service.log(username,password);
+        System.out.println("1");
+        System.out.println(user.toString());
+        return user;
     }
 
     @RequestMapping("/sel")
@@ -45,7 +50,7 @@ public class t1controller {
         System.out.println(t1service.test());
     }
 
-    @GetMapping(value = "/userLogin")
+    @RequestMapping(value = "/userLogin")
     public String userLogin(@RequestParam("username") String username, @RequestParam("password") String password) throws NoSuchAlgorithmException {
         User user = t1service.log(username,password);
         if (user != null) {
