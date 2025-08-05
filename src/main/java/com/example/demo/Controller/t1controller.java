@@ -19,8 +19,6 @@ public class t1controller {
     t1ServiceImpl t1service;
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
-    @Autowired
-    TokenUtil tokenUtil;
 
 
     @RequestMapping("/reg")
@@ -54,7 +52,7 @@ public class t1controller {
     public String userLogin(@RequestParam("username") String username, @RequestParam("password") String password) throws NoSuchAlgorithmException {
         User user = t1service.log(username,password);
         if (user != null) {
-            String res = TokenUtil.sign(username, password);
+            String res = TokenUtil.sign(username);
             System.out.println(res);
             return res;
         }

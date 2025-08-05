@@ -10,21 +10,23 @@ import org.springframework.stereotype.Service;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static org.apache.logging.log4j.util.Lazy.value;
 
 @Service
 public class t1ServiceImpl implements t1Service {
+    //@Autowired 直接注入不能显式依赖关系
+    private final User user;
+    private final t1Mapper t1mapper;
+    private final RedisTemplate<String,Object> redisTemplate;
     @Autowired
-    User user;
-    @Autowired
-    t1Mapper t1mapper;
-    @Autowired
-    RedisTemplate<String,Object> redisTemplate;
+    public t1ServiceImpl(User user,t1Mapper t1mapper,RedisTemplate<String,Object> redisTemplate) {
+        this.user = user;
+        this.t1mapper = t1mapper;
+        this.redisTemplate = redisTemplate;
+    }
 
-    private final Lock lock = new ReentrantLock();
+
 
     @Override
     public boolean reg(User userEntity) throws NoSuchAlgorithmException {
@@ -65,17 +67,21 @@ public class t1ServiceImpl implements t1Service {
             String hex = String.format("%02x", b);
             hexString.append(hex);
         }
-        System.out.println(hexString.toString());
+        System.out.println(hexString);
         return t1mapper.log(username, hexString.toString());
     }
 
     @Override
     public int test() {
+        //redisTemplate.opsForValue().increment---原子操作
         Long res = redisTemplate.opsForValue().increment("test",-1);
-        if(res < 0){
-            redisTemplate.opsForValue().increment("test",1);
+        if (res != null && res.intValue() < 0) {
+            redisTemplate.opsForValue().increment("test", 1);
             return 0;
         }
-        return res.intValue();
+        if (res != null) {
+            return res.intValue();
+        }
+        return 0;
     }
 }

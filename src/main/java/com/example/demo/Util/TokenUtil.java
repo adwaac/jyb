@@ -16,9 +16,8 @@ public class TokenUtil {
 
     /**
      * 签名生成
-     * @return
      */
-    public static String sign(String name,String passwd){
+    public static String sign(String name){
 
         String token = null;
         try {
@@ -27,7 +26,6 @@ public class TokenUtil {
             token = JWT.create()
                     .withIssuer("auth0").withClaim("id","id")
                     .withClaim("username", name)
-                    .withClaim("password",passwd)
                     .withExpiresAt(expiresAt)
                     // 使用了HMAC256加密算法。
                     .sign(Algorithm.HMAC256(TOKEN_SECRET));
@@ -39,8 +37,6 @@ public class TokenUtil {
     }
     /**
      * 签名验证
-     * @param token
-     * @return
      */
     public static boolean verify(String token){
 
@@ -60,11 +56,8 @@ public class TokenUtil {
     }
 
     public static String getId(String token){
-
-
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(TOKEN_SECRET)).withIssuer("auth0").build();
         DecodedJWT jwt = verifier.verify(token);
         return jwt.getClaim("userId").asString();
-
     }
 }
