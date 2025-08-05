@@ -6,5 +6,6 @@ import java.security.NoSuchAlgorithmException;
 
 public interface t1Service {
     boolean reg(User user) throws NoSuchAlgorithmException;
-    int log(String username,String password) throws NoSuchAlgorithmException;
+    User log(String username,String password) throws NoSuchAlgorithmException;
+    int test();
 }

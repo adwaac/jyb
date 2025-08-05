@@ -4,11 +4,14 @@ import com.example.demo.Entity.User;
 import com.example.demo.Mapper.t1Mapper;
 import com.example.demo.Service.t1Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.apache.logging.log4j.util.Lazy.value;
 
@@ -16,10 +19,16 @@ import static org.apache.logging.log4j.util.Lazy.value;
 public class t1ServiceImpl implements t1Service {
     @Autowired
     User user;
+    @Autowired
     t1Mapper t1mapper;
+    @Autowired
+    RedisTemplate<String,Object> redisTemplate;
+
+    private final Lock lock = new ReentrantLock();
 
     @Override
     public boolean reg(User userEntity) throws NoSuchAlgorithmException {
+
         MessageDigest md = MessageDigest.getInstance("MD5");
 
         String up = userEntity.getUsername()+userEntity.getPassword();
@@ -34,6 +43,8 @@ public class t1ServiceImpl implements t1Service {
             String hex = String.format("%02x", b);
             hexString.append(hex);
         }
+
+        user.setUsername(userEntity.getUsername());
         user.setMd(hexString.toString());
 
 
@@ -43,15 +54,28 @@ public class t1ServiceImpl implements t1Service {
     }
 
     @Override
-    public int log(String username, String password) throws NoSuchAlgorithmException {
+    public User log(String username, String password) throws NoSuchAlgorithmException {
+
         MessageDigest md = MessageDigest.getInstance("MD5");
-        String up = user.getUsername()+user.getPassword();
+        String up = username+password;
+        System.out.println(up);
         byte[] hashBytes = md.digest(up.getBytes());
         StringBuilder hexString = new StringBuilder();
         for (byte b : hashBytes) {
             String hex = String.format("%02x", b);
             hexString.append(hex);
         }
+        System.out.println(hexString.toString());
         return t1mapper.log(username, hexString.toString());
+    }
+
+    @Override
+    public int test() {
+        Long res = redisTemplate.opsForValue().increment("test",-1);
+        if(res < 0){
+            redisTemplate.opsForValue().increment("test",1);
+            return 0;
+        }
+        return res.intValue();
     }
 }

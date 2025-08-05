@@ -7,6 +7,6 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface t1Mapper extends BaseMapper<User> {
-    @Select("select userid from user where username = #{username} and md = #{md}")
-    int log(String username, String md);
+    @Select("select * from user where username = #{username} and md = #{md}")
+    User log(String username, String md);
 }

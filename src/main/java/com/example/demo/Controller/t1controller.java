@@ -1,13 +1,12 @@
 package com.example.demo.Controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.demo.Entity.User;
 import com.example.demo.Service.ServiceImpl.t1ServiceImpl;
+import com.example.demo.Util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -16,7 +15,10 @@ import java.security.NoSuchAlgorithmException;
 public class t1controller {
     @Autowired
     t1ServiceImpl t1service;
+    @Autowired
     RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    TokenUtil tokenUtil;
 
 
     @RequestMapping("/reg")
@@ -26,7 +28,7 @@ public class t1controller {
     }
 
     @RequestMapping("/log")
-    public int b(@RequestParam String username,String password) throws NoSuchAlgorithmException {
+    public User b(@RequestParam String username,String password) throws NoSuchAlgorithmException {
 
         return t1service.log(username,password);
     }
@@ -36,5 +38,23 @@ public class t1controller {
         System.out.println(userid);
         System.out.println(redisTemplate.opsForValue().get(userid));
         return true;
+    }
+
+    @RequestMapping("/test")
+    public void test(){
+        System.out.println(t1service.test());
+    }
+
+    @GetMapping(value = "/userLogin")
+    public String userLogin(@RequestParam("username") String username, @RequestParam("password") String password) throws NoSuchAlgorithmException {
+        User user = t1service.log(username,password);
+        if (user != null) {
+            String res = TokenUtil.sign(username, password);
+            System.out.println(res);
+            return res;
+        }
+
+        return "失败";
+
     }
 }
