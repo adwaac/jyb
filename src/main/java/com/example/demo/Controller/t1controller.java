@@ -1,6 +1,5 @@
 package com.example.demo.Controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.demo.Entity.User;
 import com.example.demo.Service.ServiceImpl.t1ServiceImpl;
 import com.example.demo.Util.TokenUtil;

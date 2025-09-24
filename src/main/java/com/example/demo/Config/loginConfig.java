@@ -14,7 +14,8 @@ public class loginConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/**")   //默认对所有请求进行拦截
-                .excludePathPatterns("/t1/userLogin","/t1/static/**","/t1/reg");
+                .addPathPatterns("/ti/u")
+                //.addPathPatterns("/**")   //默认对所有请求进行拦截
+                .excludePathPatterns("/t1/userLogin","/t1/static/**","/t1/reg","/O1/**","/O1","/JYB/**","/JYB","/file/**","/file");
     }
 }

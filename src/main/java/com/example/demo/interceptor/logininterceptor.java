@@ -16,6 +16,7 @@ public class logininterceptor implements HandlerInterceptor {
             System.out.println("OPTIONS请求，放行");
             return true;
         }
+        System.out.println(request.getRequestURI());
         String token = request.getHeader("token");
         System.out.println(token);
         response.addHeader("token", token);
